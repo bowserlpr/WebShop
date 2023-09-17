@@ -1,74 +1,30 @@
-<!DOCTYPE html>
-<html>
-    <head><title>Hello World</title></head>
-    <body>
+<?php
 
-    <button type="submit" style='background-color: red'>Suchen</Button>
+    require_once("inc/db_login.inc.php");
+    $mysqli = db_login("webshop");
 
-        <form>
-            <input type="text" name="Name" /><br/>
-            <button type="submit" style='background: 0.5, 0.5, 0.5'>Suchen</Button>
+    $data = array();
 
-        </form>
+    if(isset($_GET['getKategorien'])){
+        $query = 'SELECT DISTINCT `Kategorie` FROM `produkte`';
 
-        <script>
-            button = document.querySelector('button');
-            button.addEventListener('click', Searchdatabase);
-            console.log(document.querySelector('button'));
-
-            function Searchdatabase(event){
-                event.target.style = 'background-color: green'
-            }
-        </script>
-
-<form action="index.php" method="get">
-    Suchbegriff: <input type="text" name="suchbegriff" value="<?php echo $_GET['suchbegriff'];?>">
+    }else{
     
-    <input type="submit" value="Suchen">
-    
-</form>
-
-        <table border="1">
-            
-        <?php
-            //test
-            require_once("inc/db_login.inc.php");
-            $mysqli = db_login("webshop");
-            //$suche = $_GET['suchbegriff'];
-            $query = $mysqli->escape_string($_GET['suchbegriff']);
-            $query = 'SELECT * FROM produkte where name like "%' . $query . '%"';
-            echo $query;
-            $result = $mysqli->query($query);
-            echo "<tr>\n";
-            while ($field = $result->fetch_field()) {
-                
-                    echo " <th> $field->name</th> \n";
-                
-                
-            }
-
-            echo "</tr>\n";
-
-            while ($produkte = $result->fetch_object()) {
-                echo "<tr>\n";
-                foreach ($produkte as $key => $value) {
-                    echo " <td> $value</td> \n";
-                }
-
-                echo "</tr>\n";
-                
-                
-            }
+        $query = $mysqli->escape_string($_GET['textFeld']);
+        $query = 'SELECT * FROM produkte where name like "%' . $query . '%"';
 
 
-            Echo $_GET['suchbegriff']
+    }
+
+    $result = $mysqli->query($query);
+
+    while ($row = mysqli_fetch_assoc($result)) {
+        $data[] = $row;
+    }
 
 
-            
-        ?>
+   
+    header('Content-Type: application/json; charset=utf-8');
+    echo json_encode($data);
 
-        
-
-        </table>
-    </body>
-</html>
+?>
