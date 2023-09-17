@@ -29,8 +29,9 @@
 </form>
 
         <table border="1">
-
+            
         <?php
+            //test
             require_once("inc/db_login.inc.php");
             $mysqli = db_login("webshop");
             //$suche = $_GET['suchbegriff'];
