@@ -19,18 +19,21 @@
             Suchbegriff: <input type="text" name="suchbegriff" value="">
             
         <button id="TextSuche">Klick mich</button>
+        <select name="produktkategorien" id="kategorienTpl"></select>
 
         <div id="Tabelle"></div>
 
         <script>
             const tableDiv = document.getElementById('Tabelle');
             const textSuchButton = document.getElementById('TextSuche');
+            getKategorie();
 
             textSuchButton.addEventListener('click', search)
 
            function search(event){
                 const textFeld = document.querySelector("input");
-                const fetchString = "http://localhost/programme/webshop-1/index.php?textFeld=" + textFeld.value
+                const dropDown = document.querySelector('select');
+                const fetchString = "http://localhost/programme/webshop-1/index.php?textFeld=" + textFeld.value + "&Kategorie=" + dropDown[dropDown.selectedIndex].value
                 
                 fetch(fetchString).then(event => event.json()).then(createTable)
 
@@ -40,7 +43,6 @@
                 const keys = ['Name', 'Preis', 'Kategorie']
 
                 tableDiv.innerHTML = '';
-                console.log(jsonData.length)
                 const p = document.createElement('p');
                 switch(jsonData.length){
                     case 0:
@@ -59,8 +61,6 @@
 
 
                 const table = document.createElement('table');
-
-                console.log(jsonData)
 
                 const tr = document.createElement('tr');
                 keys.forEach((key) => {
@@ -86,8 +86,24 @@
             }
 
             function getKategorie (){
-                const fetchString = "http://localhost/programme/webshop-1/index.php?textFeld=" + textFeld.value
-                fetch("http://localhost/programme/webshop-1/index.php?getKategorien=1").then(event => event.json()).then(createTable2)
+                fetch("http://localhost/programme/webshop-1/index.php?getKategorien=1").then(event => event.json()).then(kategorien => {
+
+                    const selectTpl = document.getElementById('kategorienTpl');
+
+                    const option = document.createElement('option');
+                    option.textContent = "Alle";
+                    option.value = "%";
+                    selectTpl.appendChild(option);
+                    
+                    kategorien.forEach((entrie) =>{
+                        const option = document.createElement('option');
+                        option.textContent = entrie.Kategorie;
+                        option.value = entrie.Kategorie;
+                        selectTpl.appendChild(option);
+                    })
+
+                })
+ 
             }
             
         </script>

@@ -11,7 +11,7 @@
     }else{
     
         $query = $mysqli->escape_string($_GET['textFeld']);
-        $query = 'SELECT * FROM produkte where name like "%' . $query . '%"';
+        $query = 'SELECT * FROM produkte where name like "%' . $query . '%"  AND Kategorie LIKE "'. $_GET['Kategorie'] . '"';
 
 
     }
