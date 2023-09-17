@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Webshop</title>
+        <style>
+            th, td {
+                border: 1px solid #000;
+                padding: 8px;
+                text-align: left;
+            }
+            th {
+                background-color: #f2f2f2;
+            }
+        </style>
+    </head>
+    <body>
+            Suchbegriff: <input type="text" name="suchbegriff" value="">
+            
+        <button id="TextSuche">Klick mich</button>
+
+        <div id="Tabelle"></div>
+
+        <script>
+            const tableDiv = document.getElementById('Tabelle');
+            const textSuchButton = document.getElementById('TextSuche');
+
+            textSuchButton.addEventListener('click', search)
+
+           function search(event){
+                const textFeld = document.querySelector("input");
+                const fetchString = "http://localhost/programme/webshop-1/index.php?textFeld=" + textFeld.value
+                
+                fetch(fetchString).then(event => event.json()).then(createTable)
+
+                }
+
+            function createTable(jsonData){
+                const keys = ['Name', 'Preis', 'Kategorie']
+
+                tableDiv.innerHTML = '';
+                console.log(jsonData.length)
+                const p = document.createElement('p');
+                switch(jsonData.length){
+                    case 0:
+                        p.textContent = `Leider ist zu Ihrer Suche kein Ergebnis vorhanden`
+                        tableDiv.appendChild(p);
+                        return;
+                    case 1:
+                        p.textContent = `Es ist ${jsonData.length} Element gefunden wurden.`
+                        tableDiv.appendChild(p);
+                        break;
+                    default:
+                        p.textContent = `Es sind ${jsonData.length} Elemente gefunden wurden.`
+                        tableDiv.appendChild(p);
+
+                }
+
+
+                const table = document.createElement('table');
+
+                console.log(jsonData)
+
+                const tr = document.createElement('tr');
+                keys.forEach((key) => {
+                        const td = document.createElement('td');
+                        td.textContent = key;
+                        tr.appendChild(td);
+                    })
+                table.appendChild(tr);
+
+                jsonData.forEach((entrie) => {
+                    const tr = document.createElement('tr');
+                    
+                    keys.forEach((key) => {
+                        const td = document.createElement('td');
+                        td.textContent = entrie[key];
+                        tr.appendChild(td);
+                    })
+
+                    table.appendChild(tr);
+                })
+
+                tableDiv.appendChild(table);
+            }
+
+            function getKategorie (){
+                const fetchString = "http://localhost/programme/webshop-1/index.php?textFeld=" + textFeld.value
+                fetch("http://localhost/programme/webshop-1/index.php?getKategorien=1").then(event => event.json()).then(createTable2)
+            }
+            
+        </script>
+
+    </body>
+</html>
